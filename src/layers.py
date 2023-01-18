@@ -89,3 +89,43 @@ class PerlinNoiseLayer(Layer):
                                            base=base)
 
 
+
+class NormalizeLayer(Layer):
+    
+    def rand_param(self):
+        return {}
+    
+    def apply(self, array):
+        return (array - np.min(array))/ (np.max(array) - np.min(array))
+
+
+class GaussianFilter(Layer):
+    def rand_param(self):
+        return {
+            "sigma": [2, 15]
+        }
+    def apply(self, array, sigma=75):
+        print("Sigma value: {}".format(sigma))
+        return gaussian_filter(array, sigma)
+
+
+class ColorMapTransform(Layer):
+    
+    def randomize_params(self):
+        #can't do randomize yet
+        return {
+            colormap: []
+        }
+    
+    def apply(self, array, colormap=map):
+        
+        color_array = np.zeros((array.shape[0], array.shape[1], 3))
+        
+        #using colormap and np.where,
+        for value, color in self.params["colormap"]:
+            subset = np.where(array > value)
+            color_array[subset] = color
+            
+        return color_array
+
+
